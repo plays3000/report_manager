@@ -1,4 +1,4 @@
-import { Schema, model, type Document, type Model } from 'mongoose';
+import { Schema, model, type Document, type Model, Types } from 'mongoose';
 import bcrypt from 'bcryptjs';
 
 // 1. 메소드 정의를 위한 인터페이스
@@ -10,7 +10,7 @@ interface IPwdMethods {
 // 2. 전체 문서 인터페이스 (IPwdMethods 상속)
 interface IPwd extends Document, IPwdMethods {
     removed: boolean;
-    user: Schema.Types.ObjectId;
+    user: Types.ObjectId;
     password: string;
     salt: string;
     emailToken?: string;
@@ -23,7 +23,7 @@ interface IPwd extends Document, IPwdMethods {
 // 3. 스키마 정의 시 3번째 인자로 IPwdMethods를 전달
 const passwordSchema = new Schema<IPwd, {}, IPwdMethods>({
     removed: { type: Boolean, default: false },
-    user: { type: Schema.Types.ObjectId, ref: 'User', required: true, unique: true },
+    user: { type: Types.ObjectId, ref: 'User', required: true, unique: true },
     password: { type: String, required: true },
     salt: { type: String, required: true },
     emailVerified: { type: Boolean, default: false },
