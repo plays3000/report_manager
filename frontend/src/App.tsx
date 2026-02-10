@@ -1,11 +1,38 @@
-import Login from './components/login'; // 경로가 src/components/Login.tsx 인 경우
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import Login from './components/login';
+import Dashboard from './components/dashboard'; // 1. 외부 파일에서 가져오기
+import './App.css';
+
+// 2. (기존에 여기에 있던 const Dashboard = ... 코드는 삭제되었습니다.)
+
+// 인증 보호용 컴포넌트
+const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
+  const token = localStorage.getItem('token');
+  return token ? <>{children}</> : <Navigate to="/login" replace />;
+};
 
 function App() {
   return (
-    <div className="App">
-      {/* 다른 내용이 있다면 그 아래에 추가하거나 전체를 교체하세요 */}
-      <Login />
-    </div>
+    <Router>
+      <div id="root">
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          
+          {/* 보호된 경로: 외부에서 가져온 Dashboard 컴포넌트 사용 */}
+          <Route 
+            path="/dashboard" 
+            element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            } 
+          />
+
+          <Route path="/" element={<Navigate to="/login" replace />} />
+          <Route path="*" element={<Navigate to="/login" replace />} />
+        </Routes>
+      </div>
+    </Router>
   );
 }
 
