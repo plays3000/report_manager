@@ -3,11 +3,11 @@ import cors from 'cors';
 import compression from 'compression';
 import cookieParser from 'cookie-parser';
 
-import coreAuthRouter from './routes/coreRoutes/coreAuth';
+import coreAuthRouter from './routes/coreRoutes/coreAuth.js';
 import coreApiRouter from './routes/coreRoutes/coreApi.js';
-import coreDownloadRouter from './routes/coreRoutes/coreDownloadRouter.js';
-import corePublicRouter from'./routes/coreRoutes/corePublicRouter.js';
-import adminAuth from './controllers/coreControllers/adminAuth.js';
+// import coreDownloadRouter from './src/routes/coreRoutes/coreDownloadRouter.js';
+// import corePublicRouter from './src/routes/coreRoutes/corePublicRouter.js';
+// import adminAuth from './src/controllers/coreControllers/adminAuth.js';
 
 const app: Application = express();
 
@@ -29,11 +29,10 @@ app.use((req, res, next) => {
 });
 
 // 1. 인증이 필요 없는 공개 라우트 (로그인, 회원가입 등)
-app.use('/api', coreAuthRouter); // 여기에 /login이 들어있음
+app.use('/api', coreAuthRouter);
+// app.use('/api', adminAuth.isValidAuthToken, coreApiRouter);
 
 // 아래 라우터들은 인증이 필요한 것들이므로 로그인 라우터보다 아래에 둡니다.
-app.use('/api', adminAuth.isValidAuthToken, coreApiRouter);
-
-console.log('Login Controller:', adminAuth.login);
+// app.use('/api', adminAuth.isValidAuthToken, coreApiRouter);
 
 export default app;
