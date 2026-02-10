@@ -12,7 +12,7 @@ export const config = {
   // 보안을 위해 JWT_SECRET은 반드시 .env에 정의하는 것이 좋습니다.
   jwtSecret: process.env.JWT_SECRET ? process.env.JWT_SECRET : 'your-default-secret',
   
-  mongoUri: process.env.MONGO_URI,
+  mongoUri: process.env.DATABASE,
   
   // 프론트엔드 서버 포트 3000에 맞춰 CORS 허용 도메인 설정
   corsOrigin: process.env.CORS_ORIGIN || 'http://localhost:3000',

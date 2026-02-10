@@ -1,11 +1,12 @@
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
+import { config } from './app.js';
 
 // 함수 외부에서 미리 로드
 dotenv.config();
 
 const connectDB = async (): Promise<void> => {
-  const uri = process.env.DATABASE;
+  const uri = config.mongoUri;
 
   if (!uri) {
     console.error('❌ Error: MONGO_URI가 .env 파일에 정의되지 않았습니다.');

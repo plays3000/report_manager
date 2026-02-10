@@ -25,23 +25,27 @@ const Login: React.FC = () => {
   const handlePasswordChange = (e: ChangeEvent<HTMLInputElement>) => setPassword(e.target.value);
 
   const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    try {
-      // 서버로 보낼 때 { id, password } 형태로 전송
-      const response = await axios.post<LoginResponse>('/api/login', {
-        id,
-        password
-      });
+  e.preventDefault();
+  try {
+    const response = await axios.post('http://localhost:3000/api/auth/login', {
+      id,
+      password
+    });
 
-      if (response.data.success) {
-        localStorage.setItem('token', response.data.token);
-        setMessage(`반가워요, ${response.data.user.name}님!`);
-      }
-    } catch (error) {
-      const err = error as AxiosError<ErrorResponse>;
-      setMessage(err.response?.data?.message || '로그인 중 오류가 발생했습니다.');
+    // 서버 응답 구조가 { success, result: { token, user } } 인 경우
+    if (response.data.success) {
+      const { token, user } = response.data.result; // result에서 꺼내기
+      
+      localStorage.setItem('token', token);
+      setMessage(`반가워요, ${user.name}님!`);
     }
-  };
+  } catch (error) {
+    // ... 에러 처리 로직
+    console.error('Full Error Object:', error);
+    const err = error as AxiosError<any>;
+    setMessage(err.response?.data?.message || '로그인 중 오류가 발생했습니다.');
+  }
+};
   // const [userId, setId] = useState<string>(''); // id -> userId로 변경 (가독성)
   // const [password, setPassword] = useState<string>('');
   // const [message, setMessage] = useState<string>('');
