@@ -10,7 +10,10 @@ import { UserPassword } from '../models/coreModels/password.js';
 import { Setting } from '../models/coreModels/settings.js';
 import connectDB from '../config/db.js';
 
-await connectDB();
+connectDB().catch((err) => {
+  console.error('❌ Database connection failed:', err);
+  process.exit(1);
+});
 
 async function addNewCounts(
     id_input: string, 
@@ -62,7 +65,7 @@ async function setupApp() {
 
     const demoAdmin = {
       id: 'admin@admin.com',
-      name: 'IDURAR',
+      name: 'administrator',
       lastIp: '0.0.0.0',
       createdAt: Date.now(),
       enabled: true,

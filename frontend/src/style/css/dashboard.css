@@ -1,0 +1,110 @@
+/* Dashboard.css */
+.dashboard-container {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  background-color: #f0f2f5;
+  color: #333;
+}
+
+.sidebar {
+  width: 240px;
+  background-color: #001529;
+  color: #fff;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-logo {
+  font-size: 20px;
+  margin-bottom: 40px;
+  color: #1890ff;
+  text-align: center;
+}
+
+.nav-list {
+  list-style: none;
+  padding: 0;
+}
+
+.nav-item {
+  padding: 15px 10px;
+  cursor: pointer;
+  border-bottom: 1px solid #1f2d3d;
+  font-size: 14px;
+}
+
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.dashboard-header {
+  height: 64px;
+  background-color: #fff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 24px;
+  box-shadow: 0 1px 4px rgba(0, 21, 41, .08);
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.logout-btn {
+  padding: 8px 16px;       /* 여백을 충분히 줌 */
+  border: 1px solid #ff4d4f; /* 테두리를 빨간색 계열로 변경 (선택사항) */
+  border-radius: 4px;
+  cursor: pointer;
+  background-color: #fff;  /* 배경은 흰색 */
+  color: #ff4d4f;          /* 🚨 글자색을 붉은색으로 명시 (잘 보이게) */
+  font-weight: 600;
+  font-size: 14px;
+  transition: all 0.3s;
+}
+
+.logout-btn:hover {
+  background-color: #ff4d4f; /* 호버 시 배경색 반전 */
+  color: #fff;               /* 호버 시 글자색 반전 */
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  padding: 24px;
+}
+
+.dashboard-card {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.card-number {
+  font-size: 24px;
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+.issue-number {
+  color: #ff4d4f;
+}
+
+.content-placeholder {
+  margin: 0 24px 24px;
+  padding: 40px;
+  background-color: #fff;
+  border-radius: 8px;
+  min-height: 300px;
+  text-align: center;
+}

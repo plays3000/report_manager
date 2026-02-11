@@ -30,7 +30,7 @@ app.get('/', (req: Request, res: Response) => {
 
 // API 전용 라우트
 app.use('/api/auth', authRoutes);
-app.use('/api/core', coreRoutes);
+app.use('/api/core', coreRoutes);   // for login or register
 
 // --- 3. 에러 핸들링 (반드시 라우트 뒤에 위치) ---
 

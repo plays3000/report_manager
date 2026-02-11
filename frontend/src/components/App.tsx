@@ -1,7 +1,8 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import Login from './components/login';
-import Dashboard from './components/dashboard'; // 1. 외부 파일에서 가져오기
-import './App.css';
+import Login from './login';
+import Register from './register';
+import Dashboard from './dashboard'; // 1. 외부 파일에서 가져오기
+import '../style/css/App.css';
 
 // 2. (기존에 여기에 있던 const Dashboard = ... 코드는 삭제되었습니다.)
 
@@ -17,7 +18,7 @@ function App() {
       <div id="root">
         <Routes>
           <Route path="/login" element={<Login />} />
-          
+          <Route path="/register" element={<Register />} />
           {/* 보호된 경로: 외부에서 가져온 Dashboard 컴포넌트 사용 */}
           <Route 
             path="/dashboard" 
@@ -31,6 +32,7 @@ function App() {
           <Route path="/" element={<Navigate to="/login" replace />} />
           <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
+
       </div>
     </Router>
   );

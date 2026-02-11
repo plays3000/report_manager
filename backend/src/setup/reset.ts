@@ -6,9 +6,10 @@ import {User} from '../models/coreModels/account.js';
 import {UserPassword} from '../models/coreModels/password.js';
 import {Setting} from '../models/coreModels/settings.js';
 
-
-
-await connectDB();
+connectDB().catch((err) => {
+  console.error('❌ Database connection failed:', err);
+  process.exit(1);
+});
 
 async function deleteData(){
     await User.deleteMany();

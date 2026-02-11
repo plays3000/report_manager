@@ -3,6 +3,7 @@ import { UserPassword } from '../models/coreModels/password.js';
 import jwt from 'jsonwebtoken';
 import { config } from '../config/app.js';
 import mongoose from 'mongoose';
+import { nanoid } from 'nanoid';
 
 export const loginUser = async (loginId: string, passwordIn: string) => {
   // 1. User 모델에서 아이디(id 필드)로 사용자 검색
@@ -48,5 +49,40 @@ export const loginUser = async (loginId: string, passwordIn: string) => {
       role: user.role,
     },
     token,
+  };
+};
+
+export const registerUser = async (userData: { id: string; name: string; password: string; role?: string }) => {
+  const { id, name, password, role } = userData;
+
+  // 1. 중복 사용자 체크
+  const userExists = await User.findOne({ id });
+  if (userExists) {
+    throw new Error('이미 존재하는 계정입니다.');
+  }
+
+  // 2. User(Account) 생성
+  const newUser = await new User({
+    id,
+    name,
+    role: role || 'user',
+    enable: true,
+  }).save();
+
+  // 3. 비밀번호 해싱 및 저장
+  const userPassword = new UserPassword();
+  const salt = nanoid();
+  const passwordHash = userPassword.generateHash(salt, password);
+
+  //4. save the password in mongodb
+  await new UserPassword({
+    user: newUser._id,
+    password: passwordHash,
+    salt: salt,
+  }).save();
+
+  return {
+    id: newUser.id,
+    name: newUser.name,
   };
 };
