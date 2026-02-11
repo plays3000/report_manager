@@ -7,6 +7,11 @@ backend/
 │   ├── middlewares/    # 인증(Auth), 유효성 검사(Joi), 업로드
 │   ├── models/         # Mongoose 스키마 (coreModels 통합)
 │   ├── routes/         # 엔드포인트 정의
+        ├── coreRoutes
+            ├── index.ts          # coreRoutes 내부의 모든 라우트를 통합 (Main Entry)
+            ├── coreAuth.ts       # 인증 관련 (Login, Signup, Logout)
+            ├── coreApi.ts        # 메인 비즈니스 로직 (Profile, Dashboard 등)
+            └── corePublic.ts     # 인증 없이 접근 가능한 공용 API
 │   ├── services/       # 비즈니스 로직 (핵심 리팩토링 대상)
 │   ├── types/          # TypeScript 인터페이스/타입 정의
 │   ├── utils/          # 공통 함수 (해싱, 날짜 포맷 등)
