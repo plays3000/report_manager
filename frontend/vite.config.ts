@@ -27,6 +27,7 @@ export default ({ mode }: any) => {
           target: proxy_url,
           changeOrigin: true,
           secure: false,
+          xfwd: true,
         },
       },
     },

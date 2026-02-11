@@ -9,6 +9,7 @@ import errorHandlers from './handlers/errorHandlers.js';
 
 const app: Application = express();
 
+app.set('trust proxy', true);
 // --- 1. 보안 및 기본 미들웨어 설정 ---
 app.use(helmet()); // 보안 헤더 설정
 app.use(cors({
