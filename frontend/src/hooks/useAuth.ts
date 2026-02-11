@@ -1,6 +1,7 @@
 import { useState, type ChangeEvent} from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios, { AxiosError } from 'axios';
+import {getUserIp} from './getIp';
 
 export const useAuth = () => {
     const [id, setId] = useState<string>('');
@@ -20,7 +21,7 @@ export const useAuth = () => {
         setMessage('');
 
         try {
-        await axios.post('http://localhost:8888/api/auth/register', {
+        await axios.post('http://192.168.0.33:8888/api/auth/register', {
             id,
             password,
             name
@@ -41,7 +42,8 @@ export const useAuth = () => {
         setMessage('');
 
         try {
-            const response = await axios.post('http://localhost:8888/api/auth/login', { id, password });
+            const userIp = await getUserIp();
+            const response = await axios.post('http://localhost:8888/api/auth/login', { id, password, lastIp: userIp});
             const result = response.data.result || response.data; 
 
             if (result?.token) {

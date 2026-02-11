@@ -7,6 +7,7 @@ interface IPwdMethods {
   validPassword(salt: string, userpassword: string): boolean;
 }
 
+
 // 2. 전체 문서 인터페이스 (IPwdMethods 상속)
 interface IPwd extends Document, IPwdMethods {
     removed: boolean;
@@ -32,12 +33,25 @@ const passwordSchema = new Schema<IPwd, {}, IPwdMethods>({
 });
 
 // 메소드 구현
-passwordSchema.methods.generateHash = function (salt: string, password: string) {
-  return bcrypt.hashSync(salt + password, 10);
+// passwordSchema.methods.generateHash = function (salt: string, password: string) {
+//   return bcrypt.hashSync(salt + password, 10);
+// };
+
+// passwordSchema.methods.validPassword = function (salt: string, userpassword: string) {
+//   return bcrypt.compareSync(salt + userpassword, this.password);
+// };
+
+passwordSchema.methods.generateHash = function(salt: string, password: string) {
+  // 만약 bcrypt를 쓴다면 salt 인자를 무시하고 아래와 같이 처리하는게 일반적입니다.
+  // 하지만 현재 구조를 유지하려면:
+  return bcrypt.hashSync(password, 10); // bcrypt가 알아서 salt를 생성하고 포함함
 };
 
-passwordSchema.methods.validPassword = function (salt: string, userpassword: string) {
-  return bcrypt.compareSync(salt + userpassword, this.password);
+// 2. 로그인 시 검증 메소드 수정 🚨 핵심!
+passwordSchema.methods.validPassword = function(salt: string, passwordIn: string) {
+  // this.password는 DB에 저장된 해시값 ($2b$10$...) 입니다.
+  // bcrypt.compareSync는 DB의 해시값에서 salt를 스스로 추출해 passwordIn과 비교합니다.
+  return bcrypt.compareSync(passwordIn, this.password);
 };
 
 export const UserPassword = model<IPwd>('UserPassword', passwordSchema);

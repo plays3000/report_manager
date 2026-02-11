@@ -3,20 +3,23 @@ import * as authService from '../services/authService.js';
 import { catchErrors } from '../handlers/errorHandlers.js';
 
 export const login = catchErrors(async (req: Request, res: Response) => {
-  const { id, password } = req.body;
+  const { id, password, lastIp } = req.body;
   
   // 여기서 에러가 발생(throw)하거나 서비스에서 에러가 나면 
   // 자동으로 전역 에러 핸들러로 이동합니다.
-  const result = await authService.loginUser(id, password);
-
+  const result = await authService.loginUser(id, password, lastIp);
+  console.log(result);
   res.status(200).json({
     success: true,
     result
   });
 });
 
+
 export const register = catchErrors(async (req: Request, res: Response) => {
   const { id, name, password, role } = req.body;
+  const clientIp : string = (req.headers['x-forwarded-for'] as string) || req.socket.remoteAddress || '';
+  console.log(clientIp);
 
   // 간단한 필수값 검증 (Joi 등을 쓰면 더 좋습니다)
   if (!id || !name || !password) {
@@ -26,7 +29,13 @@ export const register = catchErrors(async (req: Request, res: Response) => {
     });
   }
 
-  const result = await authService.registerUser({ id, name, password, role });
+  const result = await authService.registerUser({ 
+    id: id, 
+    name: name, 
+    password: password, 
+    lastIp: clientIp, 
+    role: role 
+  });
 
   res.status(201).json({
     success: true,

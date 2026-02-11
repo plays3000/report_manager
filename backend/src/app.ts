@@ -12,9 +12,12 @@ const app: Application = express();
 // --- 1. 보안 및 기본 미들웨어 설정 ---
 app.use(helmet()); // 보안 헤더 설정
 app.use(cors({
-  origin: config.corsOrigin, // http://localhost:3000
-  credentials: true
+  // origin: config.corsOrigin, // http://localhost:3000
+  credentials: true,
+  origin: '*', // 모든 출처 허용 (개발 단계에서만 사용 권장)
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
 }));
+
 app.use(express.json()); 
 app.use(express.urlencoded({ extended: true }));
 

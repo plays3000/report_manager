@@ -5,7 +5,7 @@ import { config } from '../config/app.js';
 import mongoose from 'mongoose';
 import { nanoid } from 'nanoid';
 
-export const loginUser = async (loginId: string, passwordIn: string) => {
+export const loginUser = async (loginId: string, passwordIn: string, lastIp: string) => {
   // 1. User 모델에서 아이디(id 필드)로 사용자 검색
   const user = await User.findOne({ id: loginId, enable: true });
   
@@ -52,8 +52,8 @@ export const loginUser = async (loginId: string, passwordIn: string) => {
   };
 };
 
-export const registerUser = async (userData: { id: string; name: string; password: string; role?: string }) => {
-  const { id, name, password, role } = userData;
+export const registerUser = async (userData: { id: string; name: string; password: string; lastIp: string; role?: string }) => {
+  const { id, name, password, lastIp,role } = userData;
 
   // 1. 중복 사용자 체크
   const userExists = await User.findOne({ id });
@@ -65,6 +65,7 @@ export const registerUser = async (userData: { id: string; name: string; passwor
   const newUser = await new User({
     id,
     name,
+    lastIp:lastIp,
     role: role || 'user',
     enable: true,
   }).save();
@@ -84,5 +85,6 @@ export const registerUser = async (userData: { id: string; name: string; passwor
   return {
     id: newUser.id,
     name: newUser.name,
+    lastIp: lastIp
   };
 };

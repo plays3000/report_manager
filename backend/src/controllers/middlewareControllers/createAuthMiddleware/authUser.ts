@@ -61,5 +61,3 @@ export const authUser = async (req: any, res: any, { user, databasePassword, pas
     });
   }
 };
-
-// module.exports = authUser;
