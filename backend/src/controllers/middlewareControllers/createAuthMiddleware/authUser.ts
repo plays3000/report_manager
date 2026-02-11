@@ -6,7 +6,7 @@ dotenv.config();
 const jwtSecret = process.env.JWT_SECRET || 'fallback_secret_key';
 
 export const authUser = async (req: any, res: any, { user, databasePassword, password, UserPasswordModel }: any) => {
-  const isMatch = await bcrypt.compare(databasePassword.salt + password, databasePassword.password);
+  const isMatch = await bcrypt.compare(password, databasePassword.password);
 
   if (!isMatch)
     return res.status(403).json({

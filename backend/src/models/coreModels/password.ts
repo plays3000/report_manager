@@ -42,15 +42,13 @@ const passwordSchema = new Schema<IPwd, {}, IPwdMethods>({
 // };
 
 passwordSchema.methods.generateHash = function(salt: string, password: string) {
-  // 만약 bcrypt를 쓴다면 salt 인자를 무시하고 아래와 같이 처리하는게 일반적입니다.
-  // 하지만 현재 구조를 유지하려면:
-  return bcrypt.hashSync(password, 10); // bcrypt가 알아서 salt를 생성하고 포함함
+  // bcryptjs는 salt 인자를 내부에서 자동으로 처리하므로 password만 전달합니다.
+  return bcrypt.hashSync(password, 10);
 };
 
-// 2. 로그인 시 검증 메소드 수정 🚨 핵심!
+// 2. 로그인 시 검증 메소드 (비동기로 작성하는 것이 권장됩니다)
 passwordSchema.methods.validPassword = function(salt: string, passwordIn: string) {
-  // this.password는 DB에 저장된 해시값 ($2b$10$...) 입니다.
-  // bcrypt.compareSync는 DB의 해시값에서 salt를 스스로 추출해 passwordIn과 비교합니다.
+  // 가입 시 password만 넣었으므로, 검증 시에도 passwordIn만 넣습니다.
   return bcrypt.compareSync(passwordIn, this.password);
 };
 

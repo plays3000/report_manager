@@ -21,18 +21,21 @@ export const useAuth = () => {
         setMessage('');
 
         try {
-        await axios.post('http://192.168.0.33:8888/api/auth/register', {
-            id,
-            password,
-            name
-        });
-        setMessage('회원가입 성공! 로그인해주세요.');
-        setTimeout(() => navigate('/login'), 1500);
-        } catch (error) {
-        const err = error as AxiosError<{message: string}>;
-        setMessage(err.response?.data?.message || '회원가입에 실패했습니다.');
+            // const lastIp = await getUserIp();
+            await axios.post('/api/auth/register', {
+                id,
+                password,
+                name,
+                // lastIp
+            });
+            setMessage('회원가입 성공! 로그인해주세요.');
+            setTimeout(() => navigate('/login'), 1500);
+        } 
+        catch (error) {
+            const err = error as AxiosError<{message: string}>;
+            setMessage(err.response?.data?.message || '회원가입에 실패했습니다.');
         } finally {
-        setIsLoading(false);
+            setIsLoading(false);
         }
     };
 
@@ -42,16 +45,21 @@ export const useAuth = () => {
         setMessage('');
 
         try {
-            const userIp = await getUserIp();
-            const response = await axios.post('http://localhost:8888/api/auth/login', { id, password, lastIp: userIp});
+            // const userIp = await getUserIp();
+            // 🚨 수정: localhost 주소를 제거하고 상대 경로 사용
+            const response = await axios.post('/api/auth/login', { 
+            id, 
+            password, 
+            // lastIp: userIp // 👈 서비스의 currentIp 인자로 들어감
+        });
             const result = response.data.result || response.data; 
 
             if (result?.token) {
-            localStorage.setItem('token', result.token);
-            const actualName = result.user?.name || result.name || id; 
-            localStorage.setItem('userName', actualName);
-            setMessage('로그인 성공! 이동 중...');
-            setTimeout(() => navigate('/dashboard'), 100);
+                localStorage.setItem('token', result.token);
+                const actualName = result.user?.name || result.name || id; 
+                localStorage.setItem('userName', actualName);
+                setMessage('로그인 성공! 이동 중...');
+                setTimeout(() => navigate('/dashboard'), 100);
             }
         } catch (error) {
             const err = error as AxiosError<{message: string}>;

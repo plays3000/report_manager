@@ -12,6 +12,10 @@ export const loginUser = async (loginId: string, passwordIn: string, lastIp: str
   if (!user) {
     throw new Error('존재하지 않거나 비활성화된 계정입니다.');
   }
+  if (user.lastIp && user.lastIp !== lastIp) {
+    console.log(`IP 불일치: DB(${user.lastIp}) vs 접속(${lastIp})`);
+    throw new Error('등록되지 않은 기기(IP)에서의 접속입니다. 관리자에게 문의하세요.');
+  }
 
   // 2. UserPassword 모델에서 user 필드(ObjectId)로 패스워드 정보 검색
   const userPwd = await UserPassword.findOne({ 
@@ -25,7 +29,7 @@ export const loginUser = async (loginId: string, passwordIn: string, lastIp: str
 
   // 3. 모델에 정의된 validPassword 메소드를 사용하여 비밀번호 검증
   // 스키마에 정의된 salt와 입력받은 passwordIn을 결합하여 비교합니다.
-  const isMatch = userPwd.validPassword(userPwd.salt, passwordIn);
+  const isMatch = userPwd.validPassword(userPwd.salt, passwordIn); 
 
   if (!isMatch) {
     throw new Error('비밀번호가 일치하지 않습니다.');

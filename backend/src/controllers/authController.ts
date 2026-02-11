@@ -3,7 +3,9 @@ import * as authService from '../services/authService.js';
 import { catchErrors } from '../handlers/errorHandlers.js';
 
 export const login = catchErrors(async (req: Request, res: Response) => {
-  const { id, password, lastIp } = req.body;
+  const { id, password } = req.body;
+  const lastIp  : string = (req.headers['x-forwarded-for'] as string) || req.socket.remoteAddress || '';
+  console.log(lastIp)
   
   // 여기서 에러가 발생(throw)하거나 서비스에서 에러가 나면 
   // 자동으로 전역 에러 핸들러로 이동합니다.
@@ -17,9 +19,9 @@ export const login = catchErrors(async (req: Request, res: Response) => {
 
 
 export const register = catchErrors(async (req: Request, res: Response) => {
-  const { id, name, password, role } = req.body;
-  const clientIp : string = (req.headers['x-forwarded-for'] as string) || req.socket.remoteAddress || '';
-  console.log(clientIp);
+  const { id, name, password, role} = req.body;
+  // const { id, name, password, role, lastIp } = req.body;
+  const lastIp  : string = (req.headers['x-forwarded-for'] as string) || req.socket.remoteAddress || '';
 
   // 간단한 필수값 검증 (Joi 등을 쓰면 더 좋습니다)
   if (!id || !name || !password) {
@@ -33,7 +35,7 @@ export const register = catchErrors(async (req: Request, res: Response) => {
     id: id, 
     name: name, 
     password: password, 
-    lastIp: clientIp, 
+    lastIp: lastIp, 
     role: role 
   });
 

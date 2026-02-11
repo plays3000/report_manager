@@ -22,7 +22,7 @@ router.get('/profile', isValidToken, async (req: any, res: Response) => {
     if (!user) {
       return res.status(404).json({
         success: false,
-        message: '사용자를 찾을 le수 없습니다.'
+        message: '사용자를 찾을 수 없습니다.'
       });
     }
 
