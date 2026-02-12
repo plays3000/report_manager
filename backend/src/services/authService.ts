@@ -137,11 +137,6 @@ export const verifyAdminCodeAndGenerateToken = async (userId: string, inputCode:
     throw new Error(`사용자(${userId})를 찾을 수 없습니다.`);
   }
 
-  // 2. 인증 코드 검증 로직
-  // (실제로는 DB에 저장된 발급 코드와 비교해야 합니다. 예시로 '123456' 사용)
-  // const userPwd = await UserPassword.findOne({ user: userId });
-  // if (userPwd.tempCode !== inputCode) throw new Error('인증 코드가 일치하지 않습니다.');
-
   const savedCode = user.tempCode;
   const isCodeValid = (inputCode === savedCode); // 실제로는 저장된 코드와 대조하세요.
   

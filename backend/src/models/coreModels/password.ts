@@ -32,15 +32,6 @@ const passwordSchema = new Schema<IPwd, {}, IPwdMethods>({
     loggedSessions: { type: [String], default: [] }
 });
 
-// 메소드 구현
-// passwordSchema.methods.generateHash = function (salt: string, password: string) {
-//   return bcrypt.hashSync(salt + password, 10);
-// };
-
-// passwordSchema.methods.validPassword = function (salt: string, userpassword: string) {
-//   return bcrypt.compareSync(salt + userpassword, this.password);
-// };
-
 passwordSchema.methods.generateHash = function(salt: string, password: string) {
   // bcryptjs는 salt 인자를 내부에서 자동으로 처리하므로 password만 전달합니다.
   return bcrypt.hashSync(password, 10);
