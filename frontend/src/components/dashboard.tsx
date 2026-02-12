@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
-import '../style/css/dashboard.css'; // ✅ CSS 파일 임포트
+import '../style/css/dashboard.css';
 
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
@@ -17,11 +17,36 @@ const Dashboard: React.FC = () => {
     } else {
       setUserName(storedName || '사용자');
     }
-  }, [navigate]);
+
+    // --- 뒤로가기 감지 및 로그아웃 로직 추가 ---
+    
+    // 현재 페이지 상태를 push하여 뒤로가기 시 한 번 가로챌 수 있게 만듭니다.
+    window.history.pushState(null, '', window.location.href);
+
+    const handlePopState = () => {
+      const isConfirm = window.confirm("뒤로가기를 누르면 로그아웃됩니다. 계속하시겠습니까?");
+      
+      if (isConfirm) {
+        // 사용자가 '확인'을 누르면 로그아웃 처리
+        handleLogout();
+      } else {
+        // '취소'를 누르면 다시 현재 페이지 상태를 밀어넣어 페이지를 유지합니다.
+        window.history.pushState(null, '', window.location.href);
+      }
+    };
+
+    // 이벤트 리스너 등록
+    window.addEventListener('popstate', handlePopState);
+
+    // 컴포넌트 언마운트 시 리스너 제거 (메모리 누수 방지)
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+    };
+  }, [navigate, handleLogout]);
 
   return (
     <div className="dashboard-container">
-      {/* 사이드바 */}
+      {/* ... 기존 사이드바 및 메인 컨텐츠 UI 생략 ... */}
       <nav className="sidebar">
         <h2 className="sidebar-logo">Account ERP</h2>
         <ul className="nav-list">
@@ -32,7 +57,6 @@ const Dashboard: React.FC = () => {
         </ul>
       </nav>
 
-      {/* 메인 컨텐츠 영역 */}
       <main className="main-content">
         <header className="dashboard-header">
           <h3>시스템 현황</h3>
@@ -41,27 +65,7 @@ const Dashboard: React.FC = () => {
             <button onClick={handleLogout} className="logout-btn">로그아웃</button>
           </div>
         </header>
-
-        {/* 대시보드 카드 섹션 */}
-        <section className="card-grid">
-          <div className="dashboard-card">
-            <h4>전체 리포트</h4>
-            <p className="card-number">1,284</p>
-          </div>
-          <div className="dashboard-card">
-            <h4>활성 사용자</h4>
-            <p className="card-number">56</p>
-          </div>
-          <div className="dashboard-card">
-            <h4>오늘의 이슈</h4>
-            {/* 여러 클래스를 조합할 때는 백틱(``)을 쓰면 편해요 */}
-            <p className="card-number issue-number">3</p>
-          </div>
-        </section>
-
-        <div className="content-placeholder">
-          <p className="read-the-docs">여기에 주요 데이터 테이블이나 그래프가 들어갑니다.</p>
-        </div>
+        {/* ... 카드 섹션 등 기존 코드 ... */}
       </main>
     </div>
   );

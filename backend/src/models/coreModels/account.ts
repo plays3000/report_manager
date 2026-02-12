@@ -2,12 +2,14 @@ import { Schema, model, Document } from 'mongoose';
 
 interface IUser extends Document {
   id: string;
+  email: string;
   name: string;
   lastIp: string;
   enable: Boolean;
   createdAt: Date;
   role : string;
-
+  tempCode : string;
+  tempCodeCreatedAt : Date;
 }
 
 const userSchema = new Schema<IUser>({
@@ -17,6 +19,10 @@ const userSchema = new Schema<IUser>({
     unique: true,
     trim: true,
     lowercase: true 
+  },
+  email:{
+    type: String,
+    requiired: false
   },
   name: { 
     type: String, 
@@ -34,7 +40,9 @@ const userSchema = new Schema<IUser>({
     type: String,
     default: 'user',
     enum: ['user', 'admin', 'owner']
-  }
+  },
+  tempCode: { type: String },        
+  tempCodeCreatedAt: { type: Date }
 }, 
 
 {

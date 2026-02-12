@@ -3,8 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth'; // 커스텀 훅 임포트
 
 const Login: React.FC = () => {
+  // window.location.replace('/login');
   const { id, password, message, isLoading, handleIdChange, handlePasswordChange, handleLogin} = useAuth();
   const navigate = useNavigate();
+  
   // 5. 컴포넌트 UI 반환문 (이 부분이 있어야 화면이 보입니다)
   return (
     <div className="card">
