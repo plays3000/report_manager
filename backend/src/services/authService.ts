@@ -175,6 +175,7 @@ export const processKakaoLogin = async (code: string) => {
       params: {
         grant_type: 'authorization_code',
         client_id: process.env.REST_API,
+        client_secret: process.env.CLIENT_SECRET,
         redirect_uri: process.env.REDIRECT_URI,
         code,
       },
@@ -205,7 +206,7 @@ export const processKakaoLogin = async (code: string) => {
         id: email,
         email: email,
         name: nickname,
-        // provider: 'kakao', // 주의: 스키마에 provider 필드가 실제 존재하는지 확인 필수!
+        provider: 'kakao', // 주의: 스키마에 provider 필드가 실제 존재하는지 확인 필수!
         role: 'user'
       });
       await user.save();
