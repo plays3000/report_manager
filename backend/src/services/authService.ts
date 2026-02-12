@@ -5,6 +5,8 @@ import jwt from 'jsonwebtoken';
 import { config } from '../config/app.js';
 import mongoose from 'mongoose';
 import { nanoid } from 'nanoid';
+import axios from 'axios';
+import bcrypt from 'bcryptjs';
 
 export const loginUser = async (loginId: string, passwordIn: string, lastIp: string) => {
   // 1. User 모델에서 아이디로 사용자 검색
@@ -169,4 +171,88 @@ export const verifyAdminCodeAndGenerateToken = async (userId: string, inputCode:
     },
     token: finalToken,
   };
+};
+
+export const processKakaoLogin = async (code: string) => {
+  try {
+    // 1. 카카오 토큰 요청
+    const tokenResponse = await axios.post('https://kauth.kakao.com/oauth/token', null, {
+      params: {
+        grant_type: 'authorization_code',
+        client_id: process.env.REST_API,
+        redirect_uri: process.env.REDIRECT_URI,
+        code,
+      },
+    });
+    
+    const { access_token } = tokenResponse.data;
+
+    // 2. 유저 정보 요청
+    const userResponse = await axios.get('https://kapi.kakao.com/v2/user/me', {
+      headers: { Authorization: `Bearer ${access_token}` },
+    });
+
+    const { kakao_account, properties, id: kakaoId } = userResponse.data;
+    
+    // 🚨 포인트 1: 이메일이 없는 경우 대비 (카카오 설정을 안 했을 때 undefined 방지)
+    const email = kakao_account?.email || `kakao_${kakaoId}@kakao.com`;
+    const nickname = properties?.nickname || '카카오 사용자';
+
+    // 3. DB 확인
+    let user = await User.findOne({ id: email });
+    let isNewUser = false;
+
+    if (!user) {
+      isNewUser = true;
+      
+      // 🚨 포인트 2: Mongoose 트랜잭션 대신 순차 생성 (ID 중복 체크)
+      user = new User({
+        id: email,
+        email: email,
+        name: nickname,
+        // provider: 'kakao', // 주의: 스키마에 provider 필드가 실제 존재하는지 확인 필수!
+        role: 'user'
+      });
+      await user.save();
+
+      const salt = bcrypt.genSaltSync(10);
+      const dummyPassword = `social_${nanoid(10)}`; // nanoid 활용
+      const hashedPassword = bcrypt.hashSync(dummyPassword, 10);
+
+      await UserPassword.create({
+        user: user._id,
+        password: hashedPassword,
+        salt: salt,
+        authType: 'kakao'
+      });
+    }
+
+    // 🚨 포인트 3: 환경변수 체크 및 JWT 생성
+    if (!process.env.JWT_SECRET) {
+        console.error("❌ JWT_SECRET이 .env에 설정되지 않았습니다.");
+        throw new Error("서버 내부 설정 오류");
+    }
+
+    const token = jwt.sign(
+      { userId: user.id, role: user.role }, 
+      process.env.JWT_SECRET, 
+      { expiresIn: '1d' }
+    );
+
+    return { token, user: { name: user.name, role: user.role }, isNewUser };
+
+  } catch (error: any) {
+    // 백엔드 터미널에서 에러의 '진짜' 원인을 출력합니다.
+    console.error("❌ Kakao Login Error 상세 로그:");
+    console.log('REST_API_KEY:', process.env.REST_API);
+    console.log('REDIRECT_URI:', process.env.REDIRECT_URI);
+    if (error.response) {
+      // 카카오 API 응답 에러 (키값 불일치, 이미 사용된 코드 등)
+      console.error(error.response.data);
+    } else {
+      // DB 에러, 문법 에러 등
+      console.error(error.message);
+    }
+    throw error; // 다시 던져서 컨트롤러에서 처리하게 함
+  }
 };

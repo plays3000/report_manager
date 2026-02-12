@@ -4,6 +4,7 @@ import Register from './register';
 import Dashboard from './dashboard'; // 1. 외부 파일에서 가져오기
 import AdminDashboard from './adminDashboard';
 import Admin2FA from './Admin2FA';
+import KakaoCallback from './kakaoCallback';
 import '../style/css/App.css';
 
 // 2. (기존에 여기에 있던 const Dashboard = ... 코드는 삭제되었습니다.)
@@ -39,6 +40,7 @@ function App() {
               </ProtectedRoute>
             }
           />
+          <Route path="/auth/kakao/callback" element={<KakaoCallback />} />
 
           <Route path="/" element={<Navigate to="/login" replace />} />
           <Route path="*" element={<Navigate to="/login" replace />} />

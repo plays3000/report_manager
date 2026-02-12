@@ -2,10 +2,13 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth'; // 커스텀 훅 임포트
 
+
+
 const Login: React.FC = () => {
   // window.location.replace('/login');
-  const { id, password, message, isLoading, handleIdChange, handlePasswordChange, handleLogin} = useAuth();
+  const { id, password, message, isLoading, handleIdChange, handlePasswordChange, handleLogin, handleKakaoLogin} = useAuth();
   const navigate = useNavigate();
+  
   
   // 5. 컴포넌트 UI 반환문 (이 부분이 있어야 화면이 보입니다)
   return (
@@ -38,6 +41,12 @@ const Login: React.FC = () => {
         >
           계정이 없으신가요? 회원가입
         </button>
+        <button type="button" onClick={handleKakaoLogin} style={{ backgroundColor: '#FEE500', color: '#000' }}>
+          카카오로 시작하기
+        </button>
+        {/* <button type="button" onClick={handleNaverLogin} style={{ backgroundColor: '#03C75A', color: '#fff' }}>
+          네이버로 시작하기
+        </button> */}
       </form>
       {message && <p style={{ marginTop: '10px', color: message.includes('성공') ? 'green' : 'red' }}>{message}</p>}
     </div>

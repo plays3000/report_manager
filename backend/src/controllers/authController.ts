@@ -3,21 +3,6 @@ import * as authService from '../services/authService.js';
 import { catchErrors } from '../handlers/errorHandlers.js';
 import {getClientIp} from '../utils/ipHelper.js'; 
 
-// export const login = catchErrors(async (req: Request, res: Response) => {
-//   const { id, password } = req.body;
-//   const lastIp = getClientIp(req);
-//   console.log(lastIp)
-  
-//   // 여기서 에러가 발생(throw)하거나 서비스에서 에러가 나면 
-//   // 자동으로 전역 에러 핸들러로 이동합니다.
-//   const result = await authService.loginUser(id, password, lastIp);
-//   console.log(result);
-//   res.status(200).json({
-//     success: true,
-//     result
-//   });
-// });
-
 export const login = catchErrors(async (req: Request, res: Response) => {
   const { id, password } = req.body;
   const lastIp = getClientIp(req);
@@ -93,5 +78,29 @@ export const verifySecondFactor = catchErrors(async (req: Request, res: Response
     success: true,
     result,
     message: '인증에 성공했습니다. 대시보드로 이동합니다.',
+  });
+});
+
+export const kakaoLoginOrRegister = catchErrors(async (req: Request, res: Response) => {
+  const { code } = req.body;
+
+  if (!code) {
+    return res.status(400).json({
+      success: false,
+      message: '인가 코드가 없습니다.',
+    });
+  }
+
+  // 로직을 서비스 레이어로 위임합니다.
+  // 백엔드에서 필요한 REST_API_KEY와 REDIRECT_URI는 서비스 내부나 config에서 관리하는 것이 좋습니다.
+  const result = await authService.processKakaoLogin(code);
+
+  res.status(200).json({
+    success: true,
+    result: {
+      token: result.token,
+      user: result.user
+    },
+    message: result.isNewUser ? '카카오 회원가입 및 로그인 성공' : '카카오 로그인 성공'
   });
 });

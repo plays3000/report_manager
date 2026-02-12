@@ -14,14 +14,25 @@ const Admin2FA: React.FC = () => {
   const handleVerify = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await axios.post('/api/auth/verify-2fa', { id: adminId, code });
-      const result = response.data;
+      const response = await axios.post('/api/auth/admin-verify', { id: adminId, code });
+      const result = response.data.result || response.data;
 
       if (result.token) {
         localStorage.setItem('token', result.token);
-        localStorage.setItem('userName', result.name || '관리자');
-        navigate('/adminDashboard');
+        
+        // 서버 응답 구조(data.user.name 또는 data.name)에 맞춰 저장
+        const userName = result.user?.name || result.name || 'administrator';
+        localStorage.setItem('userName', userName);
+        
+        console.log("인증 성공, 관리자 대시보드로 이동합니다.");
+        navigate('/adminDashboard'); // App.tsx의 경로와 일치
       }
+
+      // if (result.token) {
+      //   localStorage.setItem('token', result.token);
+      //   localStorage.setItem('userName', result.name || '관리자');
+      //   navigate('/adminDashboard');
+      // }
     } catch (error: any) {
       setMessage(error.response?.data?.message || '인증번호가 일치하지 않습니다.');
     }

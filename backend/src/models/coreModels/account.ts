@@ -4,6 +4,7 @@ interface IUser extends Document {
   id: string;
   email: string;
   name: string;
+  provider: string;
   lastIp: string;
   enable: Boolean;
   createdAt: Date;
@@ -22,11 +23,16 @@ const userSchema = new Schema<IUser>({
   },
   email:{
     type: String,
-    requiired: false
+    required: false
   },
   name: { 
     type: String, 
     required: [true, '이름은 필수입니다.'] 
+  },
+  provider: {
+    type: String,
+    default: 'local', // 'local', 'kakao' 등
+    enum: ['local', 'kakao']
   },
   lastIp: {
     type: String,

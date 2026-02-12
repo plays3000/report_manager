@@ -3,6 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import axios, { AxiosError } from 'axios';
 // import {getUserIp} from './getIp';
 
+const REST_API_KEY = import.meta.env.VITE_REST_API; 
+const REDIRECT_URI = "http://localhost:3000/auth/kakao/callback";
+const KAKAO_AUTH_URL = `https://kauth.kakao.com/oauth/authorize?client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}&response_type=code`;
+
 export const useAuth = () => {
     const [id, setId] = useState<string>('');
     const [password, setPassword] = useState<string>('');
@@ -80,6 +84,14 @@ export const useAuth = () => {
             setIsLoading(false);
         }
     };
+    const handleKakaoLogin = () => {
+        // REST_API_KEY가 정상적으로 로드되었는지 확인
+        if (!REST_API_KEY) {
+        alert("카카오 API 키가 설정되지 않았습니다. .env 파일을 확인해주세요.");
+        return;
+        }
+        window.location.href = KAKAO_AUTH_URL;
+    };
 
     const handleLogout = () => {
         localStorage.removeItem('token');
@@ -91,8 +103,8 @@ export const useAuth = () => {
 
     // 컴포넌트에서 사용할 값들을 내보냅니다.
     return {
-        id, password,name, message, isLoading,
+        id, password,name, message, isLoading,tempUserId,
         handleIdChange, handlePasswordChange, handleLogin, handleLogout,
-        handleNameChange, handleRegister, tempUserId
+        handleNameChange, handleRegister, handleKakaoLogin 
     };
 };
